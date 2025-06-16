@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Añadir Evento | Sistema de Eventos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/añadir_evento.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+ 
+  <div class="background-carousel">
+    <div class="bg-image bg1 active"
+      style="background-image: url('{{ url_for('static', filename='images/bg1.jpg') }}');"></div>
+    <div class="bg-image bg2" style="background-image: url('{{ url_for('static', filename='images/bg2.jpg') }}');">
+    </div>
+    <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg3.jpg') }}');">
+    </div>
+  </div>
+
+  
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-box">
+        <a href="{{ url_for('inicio') }}" class="logo-enlace">
+          <span class="titulo-blanco">Sistema de Recomendación de Eventos</span>
+          <span class="subtitulo-blanco">Comunidad de Madrid</span>
+        </a>
+      </div>
+      <img src="{{ url_for('static', filename='images/bg4.png') }}" alt="Logo" class="logo-img">
+    </div>
+    <ul class="nav-links">
+      <li class="dropdown">
+        <span>Nosotros ▾</span>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('vista_etica') }}">Ética y Responsabilidad</a></li>
+          <li><a href="{{ url_for('vista_sobre_nosotros') }}">Sobre Nosotros</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="{{ url_for('vista_mapa') }}" class="icono-mapa-circular">
+          <img src="{{ url_for('static', filename='images/bg8.png') }}" alt="Mapa">
+        </a>
+      </li>
+      <li><a href="{{ url_for('añadir_evento') }}">Comparte un evento</a></li>
+      <li><a href="{{ url_for('index') }}">Recomendador de eventos</a></li>
+      {% if session['rol'] == 'Administrador' %}
+      <li class="dropdown">
+        <span>Área del administrador ▾</span>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('panel_control_admin') }}">Panel de Control</a></li>
+          <li><a href="{{ url_for('actualizar_eventos') }}">Actualizar Eventos</a></li>
+          <li><a href="{{ url_for('revisar_eventos') }}">Revisar Eventos</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      {% if session.get('usuario') %}
+      <li class="dropdown">
+        <img src="{{ url_for('static', filename='images/bg6.png') }}" class="usuario-icono" alt="Usuario">
+
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('perfil') }}">Ver perfil</a></li>
+          <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+        </ul>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+
+ 
+  <div class="form-container">
+    <h1>Proponer un Nuevo Evento</h1>
+    <p class="subtext">Rellena la información del evento. Tras revisión, podrá ser publicado.</p>
+
+    <form method="POST" action="{{ url_for('añadir_evento') }}" onsubmit="return validarFormulario()">
+      <div class="form-group">
+        <label for="titulo">Título del evento</label>
+        <input type="text" name="titulo" id="titulo" required>
+      </div>
+
+      <div class="form-group">
+        <label>¿Es gratuito?</label>
+        <div class="toggle-buttons">
+          <input type="radio" name="gratuito" value="Sí" id="gratuito_si" checked>
+          <label for="gratuito_si">Sí</label>
+          <input type="radio" name="gratuito" value="No" id="gratuito_no">
+          <label for="gratuito_no">No</label>
+        </div>
+      </div>
+
+      <div class="form-group" id="precio_group" style="display: none;">
+        <label for="precio">Precio (€)</label>
+        <input type="number" name="precio" id="precio" min="0" step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label for="fecha">Fecha del evento</label>
+        <input type="date" name="fecha" id="fecha" required>
+      </div>
+
+
+      <div class="form-group">
+        <label for="hora">Hora de inicio</label>
+        <input type="time" name="hora" id="hora" step="900" required>
+        <p class="nota-hora">Solo se aceptan eventos entre las 08:00 y las 23:45.</p>
+      </div>
+
+
+      <div class="form-group">
+        <label for="descripcion">Descripción del evento</label>
+        <textarea name="descripcion" id="descripcion" rows="5" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="distrito">Distrito donde se celebra</label>
+        <select name="distrito" id="distrito" required>
+          <option value="">Selecciona un distrito</option>
+          {% for distrito in [
+          'Arganzuela', 'Barajas', 'Carabanchel', 'Centro', 'Chamartín', 'Chamberí',
+          'Ciudad Lineal', 'Fuencarral-El Pardo', 'Hortaleza', 'Latina',
+          'Moncloa-Aravaca', 'Moratalaz', 'Puente de Vallecas', 'Retiro', 'Salamanca',
+          'San Blas-Canillejas', 'Tetuán', 'Usera', 'Vicálvaro', 'Villa de Vallecas', 'Villaverde'
+          ] %}
+          <option value="{{ distrito }}">{{ distrito }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit">Enviar para revisión</button>
+    </form>
+
+
+   
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const gratuitoRadios = document.querySelectorAll('input[name="gratuito"]');
+      const precioGroup = document.getElementById('precio_group');
+      const precioInput = document.getElementById('precio');
+     
+      const fechaInput = document.getElementById('fecha');
+      const hoy = new Date();
+      hoy.setDate(hoy.getDate() + 1);  
+      const yyyy = hoy.getFullYear();
+      const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+      const dd = String(hoy.getDate()).padStart(2, '0');
+      fechaInput.min = `${yyyy}-${mm}-${dd}`;
+
+
+      gratuitoRadios.forEach(radio => {
+        radio.addEventListener('change', function () {
+          if (document.getElementById('gratuito_no').checked) {
+            precioGroup.style.display = 'block';
+            precioInput.required = true;
+          } else {
+            precioGroup.style.display = 'none';
+            precioInput.required = false;
+            precioInput.value = '';
+          }
+        });
+      });
+    });
+
+    function validarFormulario() {
+      const hora = document.getElementById('hora').value;
+      if (!hora) {
+        alert("Debes seleccionar una hora.");
+        return false;
+      }
+
+      const [h, m] = hora.split(':').map(Number);
+      const totalHora = h + m / 60;
+
+      if (totalHora < 8 || totalHora > 23.75) {
+        alert("La hora debe estar entre las 08:00 y las 23:45.");
+        return false;
+      }
+
+      const gratuito = document.querySelector('input[name="gratuito"]:checked').value;
+      if (gratuito === "No") {
+        const precio = document.getElementById('precio').value;
+        if (precio === "" || parseFloat(precio) <= 0) {
+          alert("Si el evento no es gratuito, debes indicar un precio válido mayor a 0.");
+          return false;
+        }
+      }
+
+      const fechaValor = fechaInput.value;
+      if (!fechaValor) {
+        alert("Debes seleccionar una fecha.");
+        return false;
+      }
+      const fechaSeleccionada = new Date(fechaValor);
+      const hoy2 = new Date();
+      hoy2.setHours(0, 0, 0, 0);  
+      hoy2.setDate(hoy2.getDate() + 1); 
+
+      if (fechaSeleccionada < hoy2) {
+        alert("La fecha del evento debe ser al menos a partir de mañana.");
+        return false;
+      }
+      const desc = document.getElementById('descripcion').value.trim();
+      if (desc.split(/\s+/).length < 10) {
+        alert("La descripción debe contener al menos 10 palabras para procesar correctamente las temáticas.");
+        return false;
+      }
+
+
+      return true;
+    }
+
+  </script>
+
+
+</body>
+
+</html>

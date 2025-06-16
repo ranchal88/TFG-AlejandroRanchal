@@ -1,0 +1,112 @@
+.perfil-contenedor {
+  max-width: 420px;           
+  margin: 15px auto;             
+  padding: 25px 30px;            
+  font-size: 0.7rem; 
+  background-color: #ffffffee;
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.perfil-contenedor h2 {
+  text-align: center;
+  color: #003366;
+  margin-bottom: 25px;
+}
+
+.perfil-info {
+  background-color: #f3f6fa;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  font-size: 0.7rem;
+}
+
+.perfil-info p {
+  margin: 8px 0;
+  color: #333;
+}
+
+form {
+  margin-bottom: 25px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #003366;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 14px;
+  border: 1px solid white;
+  border-radius: 6px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-azul {
+  background-color: #0056b3;
+  color: white;
+}
+
+.btn-azul:hover {
+  background-color: #003e80;
+}
+
+.btn-rojo {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-rojo:hover {
+  background-color: #c0392b;
+}
+
+.btn-link {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  color: #0056b3;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.flash-message {
+  background-color: #fff3f3;
+  border-left: 5px solid #003366;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  color: #003366;
+  border-radius: 6px;
+}
+
+.enlace-rojo {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.enlace-rojo:hover {
+  color: #c0392b;
+}

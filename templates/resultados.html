@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio | Sistema de Recomendación de Eventos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/resultados.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+
+    <div class="background-carousel">
+        <div class="bg-image bg1 active"
+            style="background-image: url('{{ url_for('static', filename='images/bg1.jpg') }}');"></div>
+        <div class="bg-image bg2" style="background-image: url('{{ url_for('static', filename='images/bg2.jpg') }}');">
+        </div>
+        <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg3.jpg') }}');">
+        </div>
+        <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg5.jpg') }}');">
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="logo-box">
+                <a href="{{ url_for('inicio') }}" class="logo-enlace">
+                    <span class="titulo-blanco">Sistema de Recomendación de Eventos</span>
+                    <span class="subtitulo-blanco">Comunidad de Madrid</span>
+                </a>
+            </div>
+
+            <img src="{{ url_for('static', filename='images/bg4.png') }}" alt="Logo" class="logo-img">
+        </div>
+
+
+        <ul class="nav-links">
+            <li class="dropdown">
+                <span>Nosotros ▾</span>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('vista_etica') }}">Ética y Responsabilidad</a></li>
+                    <li><a href="{{ url_for('vista_sobre_nosotros') }}">Sobre Nosotros</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vista_mapa') }}" class="icono-mapa-circular">
+                    <img src="{{ url_for('static', filename='images/bg8.png') }}" alt="Mapa">
+                </a>
+            </li>
+            <li><a href="{{ url_for('añadir_evento') }}">Comparte un evento</a></li>
+            <li><a href="{{ url_for('index') }}">Recomendador de eventos</a></li>
+            {% if session['rol'] == 'Administrador' %}
+            <li class="dropdown">
+                <span>Área del administrador ▾</span>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('panel_control_admin') }}">Panel de Control</a></li>
+                    <li><a href="{{ url_for('actualizar_eventos') }}">Actualizar Eventos</a></li>
+                    <li><a href="{{ url_for('revisar_eventos') }}">Revisar Eventos</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+            {% if session.get('usuario') %}
+            <li class="dropdown">
+                <img src="{{ url_for('static', filename='images/bg6.png') }}" class="usuario-icono" alt="Usuario">
+
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('perfil') }}">Ver perfil</a></li>
+                    <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+
+
+    <body>
+        <div class="scrollable-panel">
+
+            </header>
+
+            <form id="form-filtros" method="POST">
+                <input type="hidden" name="gratuito" value="{{ 'Sí' if gratuito else 'No' }}">
+                {% if not gratuito %}
+                <input type="hidden" name="precio_min" value="{{ precio_min }}">
+                <input type="hidden" name="precio_max" value="{{ precio_max }}">
+                {% endif %}
+                <input type="hidden" name="hora_min" value="{{ hora_min }}">
+                <input type="hidden" name="hora_max" value="{{ hora_max }}">
+                <input type="hidden" name="modo_tematica" value="{{ modo_tematica }}">
+
+                {% for t in tematicas %}
+                <input type="hidden" name="tematicas" value="{{ t }}">
+                {% endfor %}
+
+                {% for d in distritos %}
+                <input type="hidden" name="distritos" value="{{ d }}">
+                {% endfor %}
+
+
+                <div class="filter-form">
+
+                    <h2>Resumen de tu selección</h2>
+                    <div class="preferences-summary">
+                        <ul>
+                            <li><b>¿Gratuito?</b> {{ 'Sí' if gratuito else 'No' }}</li>
+
+                            {% if not gratuito %}
+                            <li><b>Precio mínimo:</b> {{ precio_min }} €</li>
+                            <li><b>Precio máximo dispuesto a pagr:</b> {{ precio_max }} €</li>
+                            {% endif %}
+                            <li><b>Hora deseada de inicio del evento:</b> {{ hora_min }}:00 - {{ hora_max }}:00</li>
+                            <li><b>Modo de filtro de temáticas:</b> {{ modo_tematica }}</li>
+                            <li><b>Temáticas seleccionadas:</b> {{ ', '.join(tematicas) }}</li>
+                            <li><b>Distritos seleccionados:</b> {{ ', '.join(distritos) }}</li>
+                            <li><b>Método de similitud:</b>
+                                {% if tipo_similitud == 'gaussiana' %}
+                                Avanzado (gaussiana)
+                                {% else %}
+                                Clásico (trapezoidal)
+                                {% endif %}
+                            </li>
+
+                            {% if not gratuito %}
+                            <li><b>Peso aplicado al precio:</b> {{ (peso_precio | float * 100) | round(0) }}%</li>
+                            <li><b>Peso aplicado a la hora:</b> {{ (peso_hora | float * 100) | round(0) }}%</li>
+
+                            {% endif %}
+                        </ul>
+
+                    </div>
+
+                    <hr>
+
+                    <h2>Resultados de los eventos</h2>
+                    {% if eventos.empty %}
+                    <p>No se encontraron eventos con los filtros aplicados.</p>
+                    {% else %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Precio</th>
+                                <th>Distrito</th>
+                                <th>Temperatura</th>
+                                <th>Clima durante el evento</th>
+                                <th>Similitud Precio</th>
+                                <th>Similitud Hora</th>
+                                <th>Similitud Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for _, evento in eventos.iterrows() %}
+                            <tr>
+                                <td>
+                                    {{ evento["TITULO"] }}
+                                    {% if evento["NUEVO"] == 1 %}
+                                    <span class="badge-nuevo">🆕 Nuevo</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ evento["FECHA"] }}</td>
+                                <td>{{ "%02d:00" | format(evento["HORA"]) }}</td>
+                                <td>
+                                    {% set precio = evento["PRECIO"] %}
+                                    {% if precio and precio|float(0) > 0 %}
+                                    {{ precio }} €
+                                    {% else %}
+                                    Gratuito
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ evento["DISTRITO-INSTALACION"] }}</td>
+                                <td>
+                                    {% set temp = evento["Temperatura"] %}
+                                    {% set clima = evento["Descripción del tiempo"] %}
+                                    {% if temp != temp or clima != clima %}
+                                    <span class="badge-clima">Evento lejano</span>
+                                    {% else %}
+                                    {{ temp }}°C
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {% if temp != temp or clima != clima %}
+                                    <span class="badge-clima">Evento lejano</span>
+                                    {% else %}
+                                    {% if temp < 5 %} <span class="warning">⚠️ Mal tiempo: Temperatura baja</span>
+                                        {% elif 'lluv' in clima|lower %}
+                                        <span class="warning">⚠️ Mal tiempo: Lluvia</span>
+                                        {% elif 'chubascos' in clima|lower %}
+                                        <span class="warning">⚠️ Mal tiempo: Chubascos</span>
+                                        {% elif 'nev' in clima|lower %}
+                                        <span class="warning">⚠️ Mal tiempo: Nieve</span>
+                                        {% else %}
+                                        <span class="safe">Clima favorable</span>
+                                        {% endif %}
+                                        {% endif %}
+                                </td>
+
+
+                                <td>{{ evento["similitud_precio"] | round(2) }}</td>
+                                <td>{{ evento["similitud_hora"] | round(2) }}</td>
+                                <td>{{ evento["similitud_total"] | round(2) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+
+
+                    {% if hay_mas %}
+                    <div id="load-more-container" style="text-align:center; margin-top: 20px;">
+                        <button id="load-more" type="button" class="btn-back">Mostrar siguientes 10 eventos</button>
+                    </div>
+                    {% endif %}
+
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <script>
+            let offset = 10;
+
+            document.getElementById('load-more').addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(document.getElementById('form-filtros'));
+                const params = new URLSearchParams(formData);
+
+                fetch(`/api/eventos?offset=${offset}&cantidad=10`, {
+                    method: 'POST',
+                    body: params
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log("📦 Datos recibidos:", data);
+                        const tbody = document.querySelector('tbody');
+
+                        data.eventos.forEach(evento => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+              <td>${evento.TITULO}</td>
+              <td>${evento.FECHA}</td>
+              <td>${evento.HORA.toString().padStart(2, '0')}:00</td>
+              <td>${evento.Temperatura !== null ? evento.Temperatura + "°C" : '🔮 Clima no disponible'}</td>
+              <td>${getClimaBadge(evento)}</td>
+              <td>${evento.similitud_precio.toFixed(2)}</td>
+              <td>${evento.similitud_hora.toFixed(2)}</td>
+              <td>${evento.similitud_total.toFixed(2)}</td>
+            `;
+                            tbody.appendChild(row);
+                        });
+
+                        offset += 10;
+                        if (!data.hay_mas) {
+                            document.getElementById('load-more-container').style.display = 'none';
+                        }
+                    });
+            });
+            function getClimaBadge(evento) {
+                const descripcion = evento["Descripción del tiempo"]?.toLowerCase() || "";
+                const temperatura = evento.Temperatura;
+                const tematica = evento.TEMATICA || "";
+
+                if (temperatura == null || descripcion === "") {
+                    return `<span class="badge-clima">Evento lejano</span>`;
+                }
+
+                if (
+                    temperatura < 5 ||
+                    descripcion.includes("lluv") ||
+                    descripcion.includes("chubascos") ||
+                    descripcion.includes("nev")
+                ) {
+                    return `<span class="warning">Mal tiempo</span>`;
+                }
+
+                return `<span class="safe">Condiciones normales</span>`;
+            }
+
+        </script>
+    </body>
+
+
+
+</html>

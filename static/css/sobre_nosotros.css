@@ -1,0 +1,33 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; 
+}
+
+.contenido-nosotros {
+  max-width: 1000px;
+  margin: 40px auto ;
+  background-color: rgba(255, 255, 255, 0.94);
+  padding: 40px 40px 40px 40px;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.6;
+  overflow-y: auto;
+}
+
+.contenido-nosotros h1 {
+  color: #003366;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.contenido-nosotros p {
+  font-size: 1.05em;
+  margin-bottom: 20px;
+}
+
+.contenido-nosotros > *:last-child {
+  margin-bottom: 0;
+}

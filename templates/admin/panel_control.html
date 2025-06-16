@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Estadísticas | Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/panel_control.css') }}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+</head>
+
+<body>
+
+
+  <div class="background-carousel">
+    <div class="bg-image bg1 active"
+      style="background-image: url('{{ url_for('static', filename='images/bg1.jpg') }}');"></div>
+    <div class="bg-image bg2" style="background-image: url('{{ url_for('static', filename='images/bg2.jpg') }}');">
+    </div>
+    <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg3.jpg') }}');">
+    </div>
+    <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg5.jpg') }}');">
+    </div>
+  </div>
+
+
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-box">
+        <a href="{{ url_for('inicio') }}" class="logo-enlace">
+          <span class="titulo-blanco">Sistema de Recomendación de Eventos</span>
+          <span class="subtitulo-blanco">Comunidad de Madrid</span>
+        </a>
+      </div>
+      <img src="{{ url_for('static', filename='images/bg4.png') }}" alt="Logo" class="logo-img">
+    </div>
+
+
+    <ul class="nav-links">
+      <li class="dropdown">
+        <span>Nosotros ▾</span>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('vista_etica') }}">Ética y Responsabilidad</a></li>
+          <li><a href="{{ url_for('vista_sobre_nosotros') }}">Sobre Nosotros</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="{{ url_for('vista_mapa') }}" class="icono-mapa-circular">
+          <img src="{{ url_for('static', filename='images/bg8.png') }}" alt="Mapa">
+        </a>
+      </li>
+      <li><a href="{{ url_for('añadir_evento') }}">Comparte un evento</a></li>
+      <li><a href="{{ url_for('index') }}">Recomendador de eventos</a></li>
+      <li class="dropdown">
+        <span>Área del administrador ▾</span>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('panel_control_admin') }}">Panel de Control</a></li>
+          <li><a href="{{ url_for('actualizar_eventos') }}">Actualizar Eventos</a></li>
+          <li><a href="{{ url_for('revisar_eventos') }}">Revisar Eventos</a></li>
+        </ul>
+      </li>
+      {% if session.get('usuario') %}
+      <li class="dropdown">
+        <img src="{{ url_for('static', filename='images/bg6.png') }}" class="usuario-icono" alt="Usuario">
+
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('perfil') }}">Ver perfil</a></li>
+          <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+        </ul>
+      </li>
+      {% endif %}
+
+    </ul>
+  </nav>
+  <div id="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+  </div>
+
+
+  <div class="dashboard-wrapper">
+    <div class="sidebar">
+      <div class="card">
+        <h2>🌟 Top 5 temáticas</h2>
+        <ul class="compact-list">
+          {% for tema, cantidad in top_tematicas %}
+          <li><span>{{ tema }}</span><span>{{ cantidad }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="card scrollable">
+        <h2>📍 Distritos principales</h2>
+        <ul class="compact-list">
+          {% for distrito, cantidad in top_distritos %}
+          <li><span>{{ distrito }}</span><span>{{ cantidad }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <form action="{{ url_for('borrar_eventos') }}" method="POST">
+        <div class="encabezado-eventos">
+          <div class="buscador-con-boton">
+            <input type="text" id="buscador-eventos" placeholder="Buscar por título">
+            <button type="submit" class="btn-borrar">🗑</button>
+            <button type="button" id="exportar-excel" class="btn-exportar">📤 Importar (.xlsx)</button>
+          </div>
+
+          <div class="tabla-scroll">
+            <table id="tabla-eventos" class="tabla-eventos">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Precio</th>
+                  <th>Fecha</th>
+                  <th>Temática</th>
+                  <th>Temp (°C)</th>
+                  <th>Clima</th>
+                  <th>Usuario</th>
+                </tr>
+              </thead>
+              <tbody id="lista-eventos">
+                {% for evento in eventos %}
+                <tr>
+                  <td><input type="checkbox" name="eventos_borrar" value="{{ evento['ID-EVENTO'] }}"></td>
+                  <td>{{ evento["ID-EVENTO"] if evento["ID-EVENTO"] else "—" }}</td>
+                  <td>{{ evento.TITULO }}</td>
+                  <td>{{ evento.PRECIO }}</td>
+                  <td>{{ evento.FECHA }}</td>
+                  <td>{{ evento.TEMATICA }}</td>
+                  <td>{{ evento.Temperatura }}</td>
+                  <td>{{ evento['Descripción del tiempo'] }}</td>
+                  <td>{{ evento['Usuario'] if evento['Usuario'] else "—" }}</td>
+
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+      <div class="usuarios-card">
+        
+        <div class="usuarios-header">
+          <h2>👥 Usuarios registrados</h2>
+          <input type="text" id="buscador-usuarios" placeholder="Buscar usuario...">
+        </div>
+
+        <div class="usuarios-scroll">
+          {% for usuario in usuarios %}
+          <div class="usuario-item fila-usuario">
+
+            <div class="usuario-info">
+              <span class="nombre-usuario">{{ usuario.username }}</span>
+              <span class="usuario-rol">{{ usuario.rol }}</span>
+            </div>
+            <div class="usuario-opciones">
+              <button class="btn-opciones" onclick="toggleDropdown('dropdown-{{ loop.index }}')">⋮</button>
+              <div class="dropdown-opciones" id="dropdown-{{ loop.index }}">
+                <form method="POST" action="{{ url_for('eliminar_cuenta') }}">
+                  <input type="hidden" name="usuario" value="{{ usuario.username }}">
+                  <button type="submit" class="opcion-roja">Eliminar usuario</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin_usuario_rol') }}">
+                  <input type="hidden" name="usuario" value="{{ usuario.username }}">
+                  <input type="hidden" name="nuevo_rol"
+                    value="{{ 'Administrador' if usuario.rol == 'Básico' else 'Básico' }}">
+                  <button type="submit" class="opcion-azul">
+                    Cambiar a {{ 'Administrador' if usuario.rol == 'Básico' else 'Básico' }}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <script>
+      const input = document.getElementById('buscador-eventos');
+      input.addEventListener('keyup', function () {
+        const filtro = this.value.toLowerCase();
+        const filas = document.querySelectorAll('#lista-eventos tr');
+        filas.forEach(fila => {
+          const titulo = fila.children[2].textContent.toLowerCase();
+          fila.style.display = titulo.includes(filtro) ? '' : 'none';
+        });
+      });
+      const bgImages = document.querySelectorAll('.bg-image');
+      let current = 0;
+      setInterval(() => {
+        bgImages.forEach((img, i) => {
+          img.classList.toggle('active', i === current);
+        });
+        current = (current + 1) % bgImages.length;
+      }, 5000);
+      document.getElementById('exportar-excel').addEventListener('click', function () {
+        const tabla = document.getElementById('tabla-eventos');
+        const wb = XLSX.utils.table_to_book(tabla, { sheet: "Eventos" });
+
+        
+        const ahora = new Date();
+        const fechaHora = ahora.toLocaleString('sv-SE').replace(' ', '_').replace(/:/g, '-');
+     
+
+        const nombreArchivo = `Eventos a ${fechaHora}.xlsx`;
+
+        XLSX.writeFile(wb, nombreArchivo);
+      });
+      function toggleDropdown(id) {
+        document.querySelectorAll('.dropdown-opciones').forEach(d => {
+          if (d.id !== id) d.style.display = 'none';
+        });
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+      }
+
+      document.addEventListener('click', function (e) {
+        if (!e.target.closest('.usuario-opciones')) {
+          document.querySelectorAll('.dropdown-opciones').forEach(d => d.style.display = 'none');
+        }
+      });
+
+      document.getElementById('buscador-usuarios').addEventListener('keyup', function () {
+        const filtro = this.value.toLowerCase();
+        const usuarios = document.querySelectorAll('.fila-usuario'); 
+
+        usuarios.forEach(fila => {
+          const nombre = fila.querySelector('.nombre-usuario').textContent.toLowerCase();
+          fila.style.display = nombre.includes(filtro) ? '' : 'none';
+        });
+      });
+
+
+    </script>
+</body>
+
+</html>

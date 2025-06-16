@@ -1,0 +1,348 @@
+[
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Microconciertos en Malasaña",
+    "temperatura": 29.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 20:58:33"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "EcoPicnic en Casa de Campo",
+    "temperatura": 33.0,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 20:58:33"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Brigitte Vasallo: Queixa Roma o Muerte",
+    "temperatura": 33.1,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Jonathas de Andrade, Tiempo, sueño, olor",
+    "temperatura": 33.2,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "La Mina Tres: evento de diseño, ilustración y dibujo",
+    "temperatura": 26.3,
+    "clima": "Mayormente despejado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Los procesos creativos",
+    "temperatura": 30.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 33.5,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 32.7,
+    "clima": "Parcialmente nublado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Raül Refree + Niño de Elche",
+    "temperatura": 30.7,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Rebecca Solnit . Actos de resistencia",
+    "temperatura": 30.6,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Microconciertos en Malasaña",
+    "temperatura": 29.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "EcoPicnic en Casa de Campo",
+    "temperatura": 33.0,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:04:22"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Brigitte Vasallo: Queixa Roma o Muerte",
+    "temperatura": 33.1,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Jonathas de Andrade, Tiempo, sueño, olor",
+    "temperatura": 33.2,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "La Mina Tres: evento de diseño, ilustración y dibujo",
+    "temperatura": 26.3,
+    "clima": "Mayormente despejado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Los procesos creativos",
+    "temperatura": 30.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 33.5,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 32.7,
+    "clima": "Parcialmente nublado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Raül Refree + Niño de Elche",
+    "temperatura": 30.7,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Rebecca Solnit . Actos de resistencia",
+    "temperatura": 30.6,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Microconciertos en Malasaña",
+    "temperatura": 29.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "EcoPicnic en Casa de Campo",
+    "temperatura": 33.0,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:04"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Brigitte Vasallo: Queixa Roma o Muerte",
+    "temperatura": 33.1,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Jonathas de Andrade, Tiempo, sueño, olor",
+    "temperatura": 33.2,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "La Mina Tres: evento de diseño, ilustración y dibujo",
+    "temperatura": 26.3,
+    "clima": "Mayormente despejado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Los procesos creativos",
+    "temperatura": 30.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 33.5,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 32.7,
+    "clima": "Parcialmente nublado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Raül Refree + Niño de Elche",
+    "temperatura": 30.7,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Rebecca Solnit . Actos de resistencia",
+    "temperatura": 30.6,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Microconciertos en Malasaña",
+    "temperatura": 29.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "EcoPicnic en Casa de Campo",
+    "temperatura": 33.0,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:07:50"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Brigitte Vasallo: Queixa Roma o Muerte",
+    "temperatura": 33.1,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Jonathas de Andrade, Tiempo, sueño, olor",
+    "temperatura": 33.2,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "La Mina Tres: evento de diseño, ilustración y dibujo",
+    "temperatura": 26.3,
+    "clima": "Mayormente despejado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Los procesos creativos",
+    "temperatura": 30.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 33.5,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 32.7,
+    "clima": "Parcialmente nublado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Raül Refree + Niño de Elche",
+    "temperatura": 30.7,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Rebecca Solnit . Actos de resistencia",
+    "temperatura": 30.6,
+    "clima": "Despejado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Microconciertos en Malasaña",
+    "temperatura": 29.1,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "EcoPicnic en Casa de Campo",
+    "temperatura": 33.0,
+    "clima": "Nublado",
+    "fecha": "2025-05-26 21:08:07"
+  },
+  {
+    "tipo": "Quitar NUEVO",
+    "titulo": "Microconciertos en Malasaña",
+    "fecha": "2025-06-01 10:48:46"
+  },
+  {
+    "tipo": "Quitar NUEVO",
+    "titulo": "EcoPicnic en Casa de Campo",
+    "fecha": "2025-06-01 10:48:46"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Bendik Giske",
+    "temperatura": 29.0,
+    "clima": "Parcialmente nublado",
+    "fecha": "2025-06-01 10:48:46"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "El barbero de Picasso",
+    "temperatura": 26.8,
+    "clima": "Mayormente despejado",
+    "fecha": "2025-06-01 10:48:46"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Martha Graham Dance Company",
+    "temperatura": 32.3,
+    "clima": "Nublado",
+    "fecha": "2025-06-01 10:48:46"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "«Eephus», de Carson Lund",
+    "temperatura": 25.4,
+    "clima": "Parcialmente nublado",
+    "fecha": "2025-06-01 10:48:46"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Mercado Agroecológico de Productos Locales",
+    "temperatura": 22.7,
+    "clima": "Nublado",
+    "fecha": "2025-06-01 10:48:46"
+  },
+  {
+    "tipo": "Actualizar clima",
+    "titulo": "Paseo Fotográfico al atardecer por Madrid Río",
+    "temperatura": 28.3,
+    "clima": "Despejado",
+    "fecha": "2025-06-01 10:48:46"
+  }
+]

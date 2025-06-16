@@ -1,0 +1,31 @@
+.contenido-etica {
+  max-width: 1000px;
+  margin: 80px auto;
+  background-color: rgba(255, 255, 255, 0.94);
+  padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.6;
+}
+
+.contenido-etica h1 {
+  color: #003366;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.contenido-etica ul {
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.contenido-etica ul li {
+  margin-bottom: 10px;
+  font-size: 1.05em;
+}
+
+.contenido-etica a {
+  color: #0056b3;
+  text-decoration: underline;
+}

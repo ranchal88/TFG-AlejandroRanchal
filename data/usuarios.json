@@ -1,0 +1,22 @@
+[
+  {
+    "username": "alejandro",
+    "password": "scrypt:32768:8:1$yPGFm7r08GZL1RJZ$f6c2109cd65fda5dc377e634ce7ba64cd6f6c8757de7d3a2f3e683f1c4a161bb8f6ec60d34c2c9bc985c36e62698b869134470fbc6491780646a8963bcdc6ec5",
+    "rol": "Administrador"
+  },
+  {
+    "username": "test",
+    "password": "scrypt:32768:8:1$0raL8jMuXsST9fDv$d9e2e532a7c6f2554b955b5ca998cea921e2a52fa0375cb777dabb10759142163f50d069980f2ccd3562cd3d1653f8ec2c64eea1df1e01b47da956dcbfa910f4",
+    "rol": "B\u00e1sico"
+  },
+  {
+    "username": "carla1",
+    "password": "scrypt:32768:8:1$CqHaBNNfmCHLuGM9$37e7f859cefe46cf82c5d29229b6e9fd280b1dbf15be66be595752779fb4e284c39ec777042432646b34c5486ec0bcba3107f092d62109081a79f7a8d87314f1",
+    "rol": "Administrador"
+  },
+  {
+    "username": "pablo",
+    "password": "scrypt:32768:8:1$YtLuOkyAalFdArJn$70e09cea4baf43dff8159f488e291df1e3e9ef052b2d7166959fd83f632c6f5c821294eaca0aed97ea680274523154be4423cc2ffa196af6637b80a8a099393f",
+    "rol": "Administrador"
+  }
+]

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Perfil | Sistema de Recomendación de Eventos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/perfil.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+
+    <div class="background-carousel">
+        <div class="bg-image bg1 active"
+            style="background-image: url('{{ url_for('static', filename='images/bg1.jpg') }}');"></div>
+        <div class="bg-image bg2" style="background-image: url('{{ url_for('static', filename='images/bg2.jpg') }}');">
+        </div>
+        <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg3.jpg') }}');">
+        </div>
+        <div class="bg-image bg4" style="background-image: url('{{ url_for('static', filename='images/bg5.jpg') }}');">
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="logo-box">
+                <a href="{{ url_for('inicio') }}" class="logo-enlace">
+                    <span class="titulo-blanco">Sistema de Recomendación de Eventos</span>
+                    <span class="subtitulo-blanco">Comunidad de Madrid</span>
+                </a>
+            </div>
+            <img src="{{ url_for('static', filename='images/bg4.png') }}" alt="Logo" class="logo-img">
+        </div>
+
+        <ul class="nav-links">
+            <li class="dropdown">
+                <span>Nosotros ▾</span>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('vista_etica') }}">Ética y Responsabilidad</a></li>
+                    <li><a href="{{ url_for('vista_sobre_nosotros') }}">Sobre Nosotros</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vista_mapa') }}" class="icono-mapa-circular">
+                    <img src="{{ url_for('static', filename='images/bg8.png') }}" alt="Mapa">
+                </a>
+            </li>
+            <li><a href="{{ url_for('añadir_evento') }}">Comparte un evento</a></li>
+            <li><a href="{{ url_for('index') }}">Recomendador de eventos</a></li>
+            {% if session['rol'] == 'Administrador' %}
+            <li class="dropdown">
+                <span>Área del administrador ▾</span>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('panel_control_admin') }}">Panel de Control</a></li>
+                    <li><a href="{{ url_for('actualizar_eventos') }}">Actualizar Eventos</a></li>
+                    <li><a href="{{ url_for('revisar_eventos') }}">Revisar Eventos</a></li>
+                </ul>
+            </li>
+            {% endif %}
+            {% if session.get('usuario') %}
+            <li class="dropdown">
+                <img src="{{ url_for('static', filename='images/bg6.png') }}" class="usuario-icono" alt="Usuario">
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('perfil') }}">Ver perfil</a></li>
+                    <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+                </ul>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+
+    <div class="perfil-contenedor">
+        <h2>Mi Perfil</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="perfil-info">
+            <p><strong>Usuario:</strong> {{ session['usuario'] }}</p>
+            <p><strong>Rol:</strong> {{ session['rol'] }}</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('cambiar_nombre') }}">
+            <label for="nuevo_nombre">Nuevo nombre de usuario:</label>
+            <input type="text" name="nuevo_nombre" required>
+            <button class="btn-azul" type="submit">Actualizar nombre</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('cambiar_contraseña') }}">
+            <label for="actual">Contraseña actual:</label>
+            <input type="password" name="actual" required>
+            <label for="nueva">Nueva contraseña:</label>
+            <input type="password" name="nueva" required>
+            <button class="btn-azul" type="submit">Actualizar contraseña</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('eliminar_cuenta') }}"
+            onsubmit="return confirm('¿Seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')">
+            <button type="submit" class="enlace-rojo">Eliminar cuenta</button>
+        </form>
+
+
+        <a href="{{ url_for('logout') }}" class="btn-link">Cerrar sesión</a>
+    </div>
+
+    <script>
+        const bgImages = document.querySelectorAll('.bg-image');
+        let current = 0;
+        setInterval(() => {
+            bgImages.forEach((img, i) => {
+                img.classList.toggle('active', i === current);
+            });
+            current = (current + 1) % bgImages.length;
+        }, 5000);
+    </script>
+</body>
+
+</html>

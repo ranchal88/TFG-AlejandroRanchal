@@ -1,0 +1,17 @@
+#map {
+  width: 100%;
+  height: calc(100vh - 80px); 
+  z-index: 1;
+}
+
+
+.popup-evento {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.popup-evento h3 {
+  font-size: 1rem;
+  margin: 4px 0;
+  color: #003366;
+}

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Recomendación de Eventos</title>
+
+   
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+
+<body>
+
+
+    <div class="background-carousel">
+        <div class="bg-image bg1 active"
+            style="background-image: url('{{ url_for('static', filename='images/bg1.jpg') }}');"></div>
+        <div class="bg-image bg2" style="background-image: url('{{ url_for('static', filename='images/bg2.jpg') }}');">
+        </div>
+        <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg3.jpg') }}');">
+        </div>
+        <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg5.jpg') }}');">
+        </div>
+    </div>
+
+  
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="logo-box">
+                <a href="{{ url_for('inicio') }}" class="logo-enlace">
+                    <span class="titulo-blanco">Sistema de Recomendación de Eventos</span>
+                    <span class="subtitulo-blanco">Comunidad de Madrid</span>
+                </a>
+            </div>
+            <img src="{{ url_for('static', filename='images/bg4.png') }}" alt="Logo" class="logo-img">
+        </div>
+
+        <ul class="nav-links">
+            <li class="dropdown">
+                <span>Nosotros ▾</span>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('vista_etica') }}">Ética y Responsabilidad</a></li>
+                    <li><a href="{{ url_for('vista_sobre_nosotros') }}">Sobre Nosotros</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vista_mapa') }}" class="icono-mapa-circular">
+                    <img src="{{ url_for('static', filename='images/bg8.png') }}" alt="Mapa">
+                </a>
+            </li>
+            <li><a href="{{ url_for('añadir_evento') }}">Comparte un evento</a></li>
+            <li><a href="{{ url_for('index') }}">Recomendador de eventos</a></li>
+            {% if session['rol'] == 'Administrador' %}
+            <li class="dropdown">
+                <span>Área del administrador ▾</span>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('panel_control_admin') }}">Panel de Control</a></li>
+                    <li><a href="{{ url_for('actualizar_eventos') }}">Actualizar Eventos</a></li>
+                    <li><a href="{{ url_for('revisar_eventos') }}">Revisar Eventos</a></li>
+                </ul>
+            </li>
+            {% endif %}
+            {% if session.get('usuario') %}
+            <li class="dropdown">
+                <img src="{{ url_for('static', filename='images/bg6.png') }}" class="usuario-icono" alt="Usuario">
+
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('perfil') }}">Ver perfil</a></li>
+                    <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+                </ul>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+   
+    <div class="container">
+        <header>
+            <p>Filtra por precio, hora, temáticas, distritos y... descubre los mejores eventos!</p>
+        </header>
+        <div id="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
+
+
+
+       
+        <form method="POST" action="{{ url_for('index') }}" class="filter-form">
+
+           
+            <div class="form-group">
+                <label for="gratuito">¿Quieres que sea gratuito?</label>
+                <div class="toggle-buttons">
+                    <input type="radio" name="gratuito" value="Sí" id="gratuito_si" checked> Sí
+                    <input type="radio" name="gratuito" value="No" id="gratuito_no"> No
+                </div>
+            </div>
+
+        
+            <div class="form-group" id="precio_min_group">
+                <label for="precio_min">Precio mínimo(€)</label>
+                <input type="number" name="precio_min" id="precio_min" min="0" value="0" required>
+            </div>
+            <div class="form-group" id="precio_max_group">
+                <label for="precio_max">Precio máximo dispuesto a pagar (€)</label>
+                <input type="number" name="precio_max" id="precio_max" min="0" value="50" required>
+            </div>
+
+       
+            <div class="form-group">
+                <label for="hora_min">Hora mínima de inicio del evento</label>
+                <input type="number" name="hora_min" id="hora_min" min="0" max="23" value="10" required>
+            </div>
+            <div class="form-group">
+                <label for="hora_max">Hora máxima de inicio del evento</label>
+                <input type="number" name="hora_max" id="hora_max" min="0" max="23" value="14" required>
+            </div>
+            <div class="form-group" id="pesos_group" style="display: none;">
+                <label for="peso_precio">¿Qué importancia quieres darle al <strong>precio</strong>?</label>
+                <input type="range" name="peso_precio" id="peso_precio" min="0" max="1" step="0.1" value="0.5"
+                    oninput="outputPrecio.value = value">
+                <output id="outputPrecio">0.5</output>
+
+                <label for="peso_hora" style="margin-top: 10px;">¿Y a la <strong>hora</strong>?</label>
+                <input type="range" name="peso_hora" id="peso_hora" min="0" max="1" step="0.1" value="0.5"
+                    oninput="outputHora.value = value">
+                <output id="outputHora">0.5</output>
+
+                <p class="info-text">La suma de ambos pesos se ajustará automáticamente.</p>
+            </div>
+
+
+        
+            <div class="form-group">
+                <label for="modo_tematica">Modo de filtro de temáticas: ¿Sobre que temáticas de eventos quieres
+                    filtrar?</label>
+                <div class="toggle-buttons">
+                    <input type="radio" name="modo_tematica" value="AND" id="and" checked> AND
+                    <input type="radio" name="modo_tematica" value="OR" id="or"> OR
+                </div>
+                <p class="info-text">
+                    El filtro <b>AND</b> muestra solo los eventos que contengan <b>todas</b> las temáticas
+                    seleccionadas,
+                    mientras que el filtro <b>OR</b> muestra los eventos que contengan <b>al menos una</b>.
+                </p>
+            </div>
+
+        
+            <div class="form-group">
+                <label for="tematicas">Elige las temáticas de los eventos</label>
+                <div class="custom-select" id="tematicas-container">
+                    <button type="button" id="select-all-tematicas" class="btn-select-all">Seleccionar todas las
+                        temáticas</button>
+                    <div class="selected-items" id="tematicas-chips"></div>
+                    <div class="opciones-list" id="tematicas-opciones"></div>
+                    <input type="text" id="tematicas-search" placeholder="Buscar temáticas...">
+                </div>
+                <input type="hidden" id="tematicas-hidden" name="tematicas">
+            </div>
+
+           
+            <div class="form-group">
+                <label for="distritos">Filtra por los distritos donde quieres que estén los eventos</label>
+                <div class="custom-select" id="distritos-container">
+                    <button type="button" id="select-all-distritos" class="btn-select-all">Seleccionar todos los
+                        distritos</button>
+                    <div class="selected-items" id="distritos-chips"></div>
+                    <div class="opciones-list" id="distritos-opciones"></div>
+                    <input type="text" id="distritos-search" placeholder="Buscar distritos...">
+                </div>
+                <input type="hidden" id="distritos-hidden" name="distritos">
+            </div>
+            <div id="mensaje-error" class="mensaje-error" style="display: none;"></div>
+            <div class="form-group">
+                <label for="tipo_similitud">¿Qué método de similitud quieres usar?</label>
+                <div class="toggle-buttons">
+                    <input type="radio" name="tipo_similitud" value="trapezoidal" id="sim_trap" checked>
+                    <label for="sim_trap"><strong>Clásico (trapezoidal)</strong></label>
+
+                    <input type="radio" name="tipo_similitud" value="gaussiana" id="sim_gauss">
+                    <label for="sim_gauss"><strong>Avanzado (gaussiana)</strong></label>
+                </div>
+                <p class="info-text">
+                    <b>Clásico</b>: tolerancia suave basada en rangos definidos.<br>
+                    <b>Avanzado</b>: prioriza eventos más cercanos al valor ideal, con una caída suave.
+                </p>
+            </div>
+
+
+
+
+          
+            <button type="submit" class="btn-submit">Buscar Eventos</button>
+
+        </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tematicas = ["Aire libre", "Arte", "Aventura", "Callejero", "Celebraciones", "Ciclismo", "Cine", "Competencia", "Conciertos", "Creatividad", "Crecimiento personal", "Cultura", "Danza", "Debate", "Deportes", "Discapacidad", "Ecología", "Educación", "Entretenimiento", "Equitación", "Escénico", "Fiestas", "Familia", "Feminismo", "Flamenco", "Formación", "Historia", "Idiomas", "Infantil", "Libros", "Literatura", "Magia", "Medio ambiente", "Música", "Naturaleza", "Navidad", "Online", "Poesía", "Religioso", "Rock/Pop", "Running", "Salud", "Sociedad", "Talento", "Teatro", "Tecnología", "Tercera edad", "Turismo"];
+                const distritos = [
+                    "Arganzuela", "Barajas", "Carabanchel", "Centro", "Chamartín", "Chamberí",
+                    "Ciudad Lineal", "Fuencarral-El Pardo", "Hortaleza", "Latina",
+                    "Moncloa-Aravaca", "Moratalaz", "Puente De Vallecas", "Retiro", "Salamanca",
+                    "San Blas-Canillejas", "Tetuán", "Usera", "Vicálvaro", "Villa De Vallecas", "Villaverde"
+                ];
+
+                const tematicasChips = document.getElementById('tematicas-chips');
+                const tematicasOpciones = document.getElementById('tematicas-opciones');
+                const distritosChips = document.getElementById('distritos-chips');
+                const distritosOpciones = document.getElementById('distritos-opciones');
+
+                const inputSearchTematicas = document.getElementById('tematicas-search');
+                const inputSearchDistritos = document.getElementById('distritos-search');
+
+
+
+                let selectedTematicas = [];
+                let selectedDistritos = [];
+
+                const pesoPrecioInput = document.getElementById('peso_precio');
+                const pesoHoraInput = document.getElementById('peso_hora');
+                const outputPrecio = document.getElementById('outputPrecio');
+                const outputHora = document.getElementById('outputHora');
+
+                function actualizarPesos(origen) {
+                    const valor = parseFloat(origen.value);
+                    const complementario = (1 - valor).toFixed(1);
+
+                    if (origen === pesoPrecioInput) {
+                        pesoHoraInput.value = complementario;
+                        outputPrecio.value = valor.toFixed(1);
+                        outputHora.value = complementario;
+                    } else {
+                        pesoPrecioInput.value = complementario;
+                        outputHora.value = valor.toFixed(1);
+                        outputPrecio.value = complementario;
+                    }
+                }
+
+              
+                pesoPrecioInput.addEventListener('input', function () {
+                    actualizarPesos(pesoPrecioInput);
+                });
+                pesoHoraInput.addEventListener('input', function () {
+                    actualizarPesos(pesoHoraInput);
+                });
+
+
+                
+                inputSearchTematicas.addEventListener('input', function (event) {
+                    const searchTerm = event.target.value.toLowerCase();
+                    if (searchTerm === '') {
+                        renderTematicas(); 
+                    } else {
+                        const filteredTematicas = tematicas.filter(t => t.toLowerCase().includes(searchTerm));
+                        renderTematicas(filteredTematicas);
+                    }
+                });
+
+             
+                inputSearchDistritos.addEventListener('input', function (event) {
+                    const searchTerm = event.target.value.toLowerCase();
+                    const filteredDistritos = distritos.filter(d => d.toLowerCase().includes(searchTerm));
+                    renderDistritos(filteredDistritos);
+                });
+
+                function renderTematicas(listToShow = tematicas) {
+                    const items = document.querySelectorAll('.tematica-item');
+                    items.forEach(item => {
+                        const text = item.textContent;
+                        if (listToShow.includes(text)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+
+                        
+                        if (selectedTematicas.includes(text)) {
+                            item.classList.add('selected');
+                        } else {
+                            item.classList.remove('selected');
+                        }
+                    });
+                }
+
+
+
+                function renderDistritos(listToShow = distritos) {
+                    const items = document.querySelectorAll('.distrito-item');
+                    items.forEach(item => {
+                        const text = item.textContent;
+                        if (listToShow.includes(text)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+
+                        if (selectedDistritos.includes(text)) {
+                            item.classList.add('selected');
+                        } else {
+                            item.classList.remove('selected');
+                        }
+                    });
+                }
+
+                function crearTematicasIniciales() {
+                    tematicas.forEach(tematica => {
+                        const item = document.createElement('div');
+                        item.classList.add('tematica-item');
+                        item.textContent = tematica;
+                        item.addEventListener('click', function () {
+                            toggleTematica(tematica, item);
+                        });
+                        tematicasOpciones.appendChild(item);
+                    });
+                }
+
+                function crearDistritosIniciales() {
+                    distritos.forEach(distrito => {
+                        const item = document.createElement('div');
+                        item.classList.add('distrito-item');
+                        item.textContent = distrito;
+                        item.addEventListener('click', function () {
+                            toggleDistrito(distrito, item);
+                        });
+                        distritosOpciones.appendChild(item);
+                    });
+                }
+
+        
+                function updateHiddenFields() {
+                    document.getElementById('tematicas-hidden').value = selectedTematicas.join(', ');
+                    document.getElementById('distritos-hidden').value = selectedDistritos.join(', ');
+                }
+
+                function toggleTematica(tematica, element) {
+                    const index = selectedTematicas.indexOf(tematica);
+                    if (index === -1) {
+                        
+                        selectedTematicas.push(tematica);
+                        element.classList.add('selected');
+
+                        const selectedItem = document.createElement('div');
+                        selectedItem.classList.add('selected-tematica');
+                        selectedItem.textContent = tematica;
+                        selectedItem.setAttribute('data-value', tematica);
+                        selectedItem.addEventListener('click', function () {
+                            removeTematica(tematica);
+                        });
+                        tematicasChips.appendChild(selectedItem);
+                    } else {
+                       
+                        selectedTematicas.splice(index, 1);
+                        element.classList.remove('selected');
+                        removeTematica(tematica);
+                    }
+                    updateHiddenFields();
+                }
+
+                function removeTematica(tematica) {
+                    const item = document.querySelector(`.selected-tematica[data-value="${tematica}"]`);
+                    if (item) item.remove();
+
+                    
+                    const listItems = document.querySelectorAll('.tematica-item');
+                    listItems.forEach(el => {
+                        if (el.textContent === tematica) el.classList.remove('selected');
+                    });
+
+                    selectedTematicas = selectedTematicas.filter(item => item !== tematica);
+                    updateHiddenFields();
+                }
+
+                function toggleDistrito(distrito, element) {
+                    const index = selectedDistritos.indexOf(distrito);
+                    if (index === -1) {
+                        
+                        selectedDistritos.push(distrito);
+                        element.classList.add('selected');
+
+                        const selectedItem = document.createElement('div');
+                        selectedItem.classList.add('selected-distrito');
+                        selectedItem.textContent = distrito;
+                        selectedItem.setAttribute('data-value', distrito);
+                        selectedItem.addEventListener('click', function () {
+                            removeDistrito(distrito);
+                        });
+                        distritosChips.appendChild(selectedItem);
+                    } else {
+                      
+                        selectedDistritos.splice(index, 1);
+                        element.classList.remove('selected');
+                        removeDistrito(distrito);
+                    }
+                    updateHiddenFields();
+                }
+
+                function removeDistrito(distrito) {
+                    const item = document.querySelector(`.selected-distrito[data-value="${distrito}"]`);
+                    if (item) item.remove();
+
+                    const listItems = document.querySelectorAll('.distrito-item');
+                    listItems.forEach(el => {
+                        if (el.textContent === distrito) el.classList.remove('selected');
+                    });
+
+                    selectedDistritos = selectedDistritos.filter(item => item !== distrito);
+                    updateHiddenFields();
+                }
+
+                
+                document.getElementById('select-all-tematicas').addEventListener('click', function () {
+                    tematicas.forEach(t => {
+                        if (!selectedTematicas.includes(t)) {
+                            selectedTematicas.push(t);
+
+                           
+                            const item = Array.from(document.querySelectorAll('.tematica-item')).find(el => el.textContent === t);
+                            if (item) item.classList.add('selected');
+
+                            
+                            if (!document.querySelector(`.selected-tematica[data-value="${t}"]`)) {
+                                const selectedItem = document.createElement('div');
+                                selectedItem.classList.add('selected-tematica');
+                                selectedItem.textContent = t;
+                                selectedItem.setAttribute('data-value', t);
+                                selectedItem.addEventListener('click', function () {
+                                    removeTematica(t);
+                                });
+                                tematicasChips.appendChild(selectedItem);
+
+                            }
+                        }
+                    });
+                    updateHiddenFields();
+                });
+
+               
+                document.getElementById('select-all-distritos').addEventListener('click', function () {
+                    distritos.forEach(d => {
+                        if (!selectedDistritos.includes(d)) {
+                            selectedDistritos.push(d);
+
+                            const item = Array.from(document.querySelectorAll('.distrito-item')).find(el => el.textContent === d);
+                            if (item) item.classList.add('selected');
+
+                            if (!document.querySelector(`.selected-distrito[data-value="${d}"]`)) {
+                                const selectedItem = document.createElement('div');
+                                selectedItem.classList.add('selected-distrito');
+                                selectedItem.textContent = d;
+                                selectedItem.setAttribute('data-value', d);
+                                selectedItem.addEventListener('click', function () {
+                                    removeDistrito(d);
+                                });
+                                distritosChips.appendChild(selectedItem);
+
+                            }
+                        }
+                    });
+                    updateHiddenFields();
+                });
+                document.querySelector('.filter-form').addEventListener('submit', function (e) {
+                    const mensajeError = document.getElementById('mensaje-error');
+
+                    if (selectedTematicas.length === 0) {
+                        e.preventDefault();
+                        mensajeError.style.display = 'block';
+                        mensajeError.textContent = 'Selecciona al menos una temática.';
+                        return;
+                    }
+
+                    if (selectedDistritos.length === 0) {
+                        e.preventDefault();
+                        mensajeError.style.display = 'block';
+                        mensajeError.textContent = 'Selecciona al menos un distrito.';
+                        return;
+                    }
+
+             
+                    mensajeError.style.display = 'none';
+                });
+
+
+                crearTematicasIniciales();
+                crearDistritosIniciales();
+              
+                renderTematicas(tematicas);
+                renderDistritos(distritos);
+            });
+
+
+        </script>
+
+
+    
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#tematicas').select2({
+                    placeholder: "Selecciona las temáticas",
+                    allowClear: true
+                });
+
+                $('#distritos').select2({
+                    placeholder: "Selecciona los distritos",
+                    allowClear: true
+                });
+
+                
+                $('input[name="gratuito"]').on('change', function () {
+                    if ($('#gratuito_no').is(':checked')) {
+                        $('#precio_min_group').show();
+                        $('#precio_max_group').show();
+                    } else {
+                        $('#precio_min_group').hide();
+                        $('#precio_max_group').hide();
+                    }
+                });
+
+               
+                if ($('#gratuito_no').is(':checked')) {
+                    $('#precio_min_group').show();
+                    $('#precio_max_group').show();
+                } else {
+                    $('#precio_min_group').hide();
+                    $('#precio_max_group').hide();
+                }
+            });
+            $('input[name="gratuito"]').on('change', function () {
+                if ($('#gratuito_no').is(':checked')) {
+                    $('#precio_min_group').show();
+                    $('#precio_max_group').show();
+                    $('#pesos_group').show(); 
+                } else {
+                    $('#precio_min_group').hide();
+                    $('#precio_max_group').hide();
+                    $('#pesos_group').hide(); 
+                }
+            });
+
+           
+            if ($('#gratuito_no').is(':checked')) {
+                $('#precio_min_group').show();
+                $('#precio_max_group').show();
+                $('#pesos_group').show();
+            } else {
+                $('#precio_min_group').hide();
+                $('#precio_max_group').hide();
+                $('#pesos_group').hide();
+            }
+
+            document.querySelector('.filter-form').addEventListener('submit', function (e) {
+                if (selectedTematicas.length === 0) {
+                    alert('Por favor, selecciona al menos una temática.');
+                    e.preventDefault();
+                    return;
+                }
+                if (selectedDistritos.length === 0) {
+                    alert('Por favor, selecciona al menos un distrito.');
+                    e.preventDefault();
+                    return;
+                }
+                const gratuitoNo = document.getElementById('gratuito_no').checked;
+
+                mensajeError.style.display = 'none';
+            });
+        </script>
+
+
+</body>
+
+</html>

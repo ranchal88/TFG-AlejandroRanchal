@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inicio | Sistema de Recomendación de Eventos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+
+
+  <div class="background-carousel">
+    <div class="bg-image bg1 active"
+      style="background-image: url('{{ url_for('static', filename='images/bg1.jpg') }}');"></div>
+    <div class="bg-image bg2" style="background-image: url('{{ url_for('static', filename='images/bg2.jpg') }}');">
+    </div>
+    <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg3.jpg') }}');">
+    </div>
+    <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg5.jpg') }}');">
+    </div>
+  </div>
+
+
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-box">
+        <a href="{{ url_for('inicio') }}" class="logo-enlace">
+          <span class="titulo-blanco">Sistema de Recomendación de Eventos</span>
+          <span class="subtitulo-blanco">Comunidad de Madrid</span>
+        </a>
+      </div>
+
+      <img src="{{ url_for('static', filename='images/bg4.png') }}" alt="Logo" class="logo-img">
+    </div>
+
+
+    <ul class="nav-links">
+      <li class="dropdown">
+        <span>Nosotros ▾</span>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('vista_etica') }}">Ética y Responsabilidad</a></li>
+          <li><a href="{{ url_for('vista_sobre_nosotros') }}">Sobre Nosotros</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="{{ url_for('vista_mapa') }}" class="icono-mapa-circular">
+          <img src="{{ url_for('static', filename='images/bg8.png') }}" alt="Mapa">
+        </a>
+      </li>
+      <li><a href="{{ url_for('añadir_evento') }}">Comparte un evento</a></li>
+      <li><a href="{{ url_for('index') }}">Recomendador de eventos</a></li>
+      {% if session['rol'] == 'Administrador' %}
+      <li class="dropdown">
+        <span>Área del administrador ▾</span>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('panel_control_admin') }}">Panel de Control</a></li>
+          <li><a href="{{ url_for('actualizar_eventos') }}">Actualizar Eventos</a></li>
+          <li><a href="{{ url_for('revisar_eventos') }}">Revisar Eventos</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      {% if session.get('usuario') %}
+      <li class="dropdown">
+        <img src="{{ url_for('static', filename='images/bg6.png') }}" class="usuario-icono" alt="Usuario">
+
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('perfil') }}">Ver perfil</a></li>
+          <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+        </ul>
+      </li>
+      {% endif %}
+
+
+
+    </ul>
+  </nav>
+  <main class="contenido"></main>
+  <div id="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+  </div>
+
+ 
+  <div class="tarjeta-carousel">
+    <div class="tarjeta active" id="tarjeta1">
+      <h2>🎯 Encuentra eventos hechos para ti</h2>
+      <p>Este sistema analiza tus preferencias de precio, horario, distrito y temática para recomendarte los eventos más
+        relevantes en Madrid.</p>
+      <a href="{{ url_for('index') }}" class="btn-tarjeta">Ir al Recomendador</a>
+    </div>
+
+    <div class="tarjeta" id="tarjeta2">
+      <h2>📝 Comparte tus propios eventos</h2>
+      <p>Rellena un formulario con la información básica de tu evento y será revisado y publicado en caso de aprobación.
+      </p>
+      <a href="{{ url_for('añadir_evento') }}" class="btn-tarjeta btn-alt">Crear Evento</a>
+    </div>
+
+    <div class="controles-carousel">
+      <button id="prev">❮</button>
+      <button id="next">❯</button>
+    </div>
+  </div>
+
+  <div class="info-bloque">
+    <div class="info-item">
+      <span class="info-icon">⏰</span>
+      <div>
+        <h4>Filtrado por horario y precio</h4>
+        <p>Ajusta los eventos a tu disponibilidad y presupuesto</p>
+      </div>
+    </div>
+    <div class="info-item">
+      <span class="info-icon">🎭</span>
+      <div>
+        <h4>Más de 50 temáticas</h4>
+        <p>Desde arte y cultura hasta deporte o tecnología</p>
+      </div>
+    </div>
+    <div class="info-item">
+      <span class="info-icon">📍</span>
+      <div>
+        <h4>Distritos de Madrid</h4>
+        <p>Encuentra eventos en cualquier zona de la ciudad</p>
+      </div>
+    </div>
+    <div class="info-item">
+      <span class="info-icon">🌤️</span>
+      <div>
+        <h4>Clima incluido</h4>
+        <p>Conoce el tiempo antes de asistir a cada evento</p>
+      </div>
+    </div>
+  </div>
+  <div class="evento-reciente-box-horizontal">
+    <button id="prev-evento" class="flecha-lateral">❮</button>
+
+    <div id="evento-reciente" class="evento-reciente"></div>
+
+    <button id="next-evento" class="flecha-lateral">❯</button>
+  </div>
+
+
+
+  </main>
+
+  <script>
+    const images = document.querySelectorAll('.bg-image');
+    let current = 0;
+
+    function showImage(index) {
+      images.forEach((img, i) => {
+        img.classList.toggle('active', i === index);
+      });
+    }
+
+    setInterval(() => {
+      current = (current + 1) % images.length;
+      showImage(current);
+    }, 5000);
+
+    
+    const tarjetas = document.querySelectorAll('.tarjeta');
+    let current1 = 0;
+
+    const showTarjeta = (index) => {
+      tarjetas.forEach((t, i) => t.classList.toggle('active', i === index));
+    };
+
+    document.getElementById('next').addEventListener('click', () => {
+      current1 = (current1 + 1) % tarjetas.length;
+      showTarjeta(current1);
+    });
+
+    document.getElementById('prev').addEventListener('click', () => {
+      current1 = (current1 - 1 + tarjetas.length) % tarjetas.length;
+      showTarjeta(current1);
+    });
+
+    setInterval(() => {
+      current1 = (current1 + 1) % tarjetas.length;
+      showTarjeta(current1);
+    }, 5000);
+
+    let eventosRecientes = [];
+    let actualIndex = 0;
+
+    function mostrarEvento(evento) {
+      const contenedor = document.getElementById('evento-reciente');
+      const esNuevo = evento.NUEVO == 1 ? '<span class="badge-nuevo">🆕 Nuevo</span>' : '';
+      const fecha = new Date(evento.FECHA).toLocaleDateString();
+
+      contenedor.innerHTML = `
+      <strong>${evento.TITULO}</strong> ${esNuevo}<br>
+      Precio: ${evento.PRECIO ?? '0'} € | Fecha: ${fecha} | Hora: ${evento.HORA}:00<br>
+      Temática: ${evento.TEMATICA}<br>
+      ${evento.Temperatura ?? '—'}°C - ${evento["Descripción del tiempo"] ?? 'sin datos'}
+    `;
+    }
+
+    function avanzar(n) {
+      if (!eventosRecientes.length) return;
+      actualIndex = (actualIndex + n + eventosRecientes.length) % eventosRecientes.length;
+      mostrarEvento(eventosRecientes[actualIndex]);
+    }
+
+
+    fetch('/api/eventos_recientes')
+      .then(res => res.json())
+      .then(data => {
+        eventosRecientes = data.eventos || [];
+        if (eventosRecientes.length > 0) {
+          mostrarEvento(eventosRecientes[0]);
+          setInterval(() => avanzar(1), 3000);
+        }
+      });
+
+  
+    document.getElementById('next-evento').addEventListener('click', () => avanzar(1));
+    document.getElementById('prev-evento').addEventListener('click', () => avanzar(-1));
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revisión de eventos | Administrador</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/revisar.css') }}">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+
+  
+  <div class="background-carousel">
+    <div class="bg-image bg1 active"
+      style="background-image: url('{{ url_for('static', filename='images/bg1.jpg') }}');"></div>
+    <div class="bg-image bg2" style="background-image: url('{{ url_for('static', filename='images/bg2.jpg') }}');">
+    </div>
+    <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg3.jpg') }}');">
+    </div>
+    <div class="bg-image bg3" style="background-image: url('{{ url_for('static', filename='images/bg5.jpg') }}');">
+    </div>
+  </div>
+
+
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-box">
+        <a href="{{ url_for('inicio') }}" class="logo-enlace">
+          <span class="titulo-blanco">Sistema de Recomendación de Eventos</span>
+          <span class="subtitulo-blanco">Comunidad de Madrid</span>
+        </a>
+      </div>
+      <img src="{{ url_for('static', filename='images/bg4.png') }}" alt="Logo" class="logo-img">
+    </div>
+
+
+    <ul class="nav-links">
+      <li class="dropdown">
+        <span>Nosotros ▾</span>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('vista_etica') }}">Ética y Responsabilidad</a></li>
+          <li><a href="{{ url_for('vista_sobre_nosotros') }}">Sobre Nosotros</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="{{ url_for('vista_mapa') }}" class="icono-mapa-circular">
+          <img src="{{ url_for('static', filename='images/bg8.png') }}" alt="Mapa">
+        </a>
+      </li>
+      <li><a href="{{ url_for('añadir_evento') }}">Comparte un evento</a></li>
+      <li><a href="{{ url_for('index') }}">Recomendador de eventos</a></li>
+      <li class="dropdown">
+        <span>Área del administrador ▾</span>
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('panel_control_admin') }}">Panel de Control</a></li>
+          <li><a href="{{ url_for('actualizar_eventos') }}">Actualizar Eventos</a></li>
+          <li><a href="{{ url_for('revisar_eventos') }}">Revisar Eventos</a></li>
+        </ul>
+      </li>
+      {% if session.get('usuario') %}
+      <li class="dropdown">
+        <img src="{{ url_for('static', filename='images/bg6.png') }}" class="usuario-icono" alt="Usuario">
+
+        <ul class="dropdown-menu">
+          <li><a href="{{ url_for('perfil') }}">Ver perfil</a></li>
+          <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+        </ul>
+      </li>
+      {% endif %}
+
+    </ul>
+  </nav>
+
+
+  <div class="admin-panel">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-message {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <h1>Revisión de eventos propuestos</h1>
+    <p>En esta tabla puedes aprobar o rechazar los eventos propuestos por los usuarios.</p>
+
+
+    {% if eventos %}
+    <div class="tabla-wrapper">
+      <table class="tabla-eventos">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Distrito</th>
+            <th>Descripción</th>
+            <th>Temáticas sugeridas</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for evento in eventos %}
+          <tr>
+            <td>{{ evento.TITULO }}</td>
+            <td>{{ evento.FECHA }}</td>
+            <td>
+              {% set horas = evento.HORA|int %}
+              {% set minutos = ((evento.HORA - horas) * 60)|round(0, 'floor') %}
+              {{ "%02d:%02d"|format(horas, minutos) }}
+            </td>
+            <td>{{ evento.DISTRITO }}</td>
+            <td>{{ evento.DESCRIPCION }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('revisar_eventos') }}">
+                <input type="hidden" name="titulo" value="{{ evento.TITULO }}">
+                <select name="tematica_manual" multiple size="4" class="tematica-select">
+                  {% for opcion in tematicas_disponibles %}
+                  <option value="{{ opcion }}" {% if opcion in evento.TEMATICA %}selected{% endif %}>{{ opcion }}
+                  </option>
+                  {% endfor %}
+                </select>
+                <button class="btn-guardar" name="accion" value="actualizar_tematica">Guardar</button>
+              </form>
+            </td>
+            <td>{{ evento['Usuario'] or '—' }}</td>
+
+            <td>
+              <form method="POST" action="{{ url_for('revisar_eventos') }}">
+                <input type="hidden" name="titulo" value="{{ evento.TITULO }}">
+                <button class="btn-aprobar" name="accion" value="aprobar">Aprobar</button>
+                <button class="btn-rechazar" name="accion" value="rechazar">Rechazar</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div> 
+    
+    {% else %}
+    <p class="mensaje-vacio">No hay eventos pendientes por revisar.</p>
+    {% endif %}
+
+  </div>
+
+  <script>
+    const images = document.querySelectorAll('.bg-image');
+    let current = 0;
+
+    setInterval(() => {
+      images.forEach((img, i) => {
+        img.classList.toggle('active', i === current);
+      });
+      current = (current + 1) % images.length;
+    }, 5000);
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Mapa de Eventos | Sistema de Recomendación</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mapa.css') }}">
+
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+
+   
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="logo-box">
+                <a href="{{ url_for('inicio') }}" class="logo-enlace">
+                    <span class="titulo-blanco">Sistema de Recomendación de Eventos</span>
+                    <span class="subtitulo-blanco">Comunidad de Madrid</span>
+                </a>
+            </div>
+            <img src="{{ url_for('static', filename='images/bg4.png') }}" alt="Logo" class="logo-img">
+        </div>
+
+        <ul class="nav-links">
+            <li class="dropdown">
+                <span>Nosotros ▾</span>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('vista_etica') }}">Ética y Responsabilidad</a></li>
+                    <li><a href="{{ url_for('vista_sobre_nosotros') }}">Sobre Nosotros</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ url_for('vista_mapa') }}" class="icono-mapa-circular">
+                    <img src="{{ url_for('static', filename='images/bg8.png') }}" alt="Mapa">
+                </a>
+            </li>
+            <li><a href="{{ url_for('añadir_evento') }}">Comparte un evento</a></li>
+            <li><a href="{{ url_for('index') }}">Recomendador de eventos</a></li>
+            {% if session['rol'] == 'Administrador' %}
+            <li class="dropdown">
+                <span>Área del administrador ▾</span>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('panel_control_admin') }}">Panel de Control</a></li>
+                    <li><a href="{{ url_for('actualizar_eventos') }}">Actualizar Eventos</a></li>
+                    <li><a href="{{ url_for('revisar_eventos') }}">Revisar Eventos</a></li>
+                </ul>
+            </li>
+            {% endif %}
+            {% if session.get('usuario') %}
+            <li class="dropdown">
+                <img src="{{ url_for('static', filename='images/bg6.png') }}" class="usuario-icono" alt="Usuario">
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('perfil') }}">Ver perfil</a></li>
+                    <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+                </ul>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div id="map"></div>
+
+ 
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+
+        const map = L.map('map').setView([40.4168, -3.7038], 11); 
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+               
+                    const userIcon = L.icon({
+                        iconUrl: "{{ url_for('static', filename='images/bg7.png') }}",
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 32],
+                        popupAnchor: [0, -32],
+                    });
+
+                    L.marker([userLat, userLng], { icon: userIcon })
+                        .addTo(map)
+                        .bindPopup("📍 Estás aquí")
+                        .openPopup();
+
+                    map.setView([userLat, userLng], 12);
+                },
+                function (error) {
+                    console.warn("No se pudo obtener la ubicación:", error.message);
+                }
+            );
+        } else {
+            console.warn("Geolocalización no soportada por el navegador.");
+        }
+
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const distritos = {{ distritos | tojson | safe }};
+        const eventos = {{ eventos | tojson | safe }};
+        const distritosSet = new Set(Object.keys(distritos));
+
+        eventos.forEach(ev => {
+            const distrito = ev["DISTRITO-INSTALACION"];
+            console.log("Claves de evento[0]:", Object.keys(eventos[0]));
+
+            if (!distritosSet.has(distrito)) {
+                console.warn("❌ Evento con distrito no encontrado en distritos_coords:", distrito);
+            }
+        });
+
+
+        console.log("DISTRITOS:", distritos);
+        console.log("EVENTOS:", eventos);
+
+
+        const eventosPorDistrito = {};
+
+        eventos.forEach(ev => {
+            const distrito = ev["DISTRITO-INSTALACION"];
+            if (!eventosPorDistrito[distrito]) {
+                eventosPorDistrito[distrito] = [];
+            }
+            eventosPorDistrito[distrito].push(ev);
+        });
+
+        Object.entries(eventosPorDistrito).forEach(([distrito, eventosDistrito]) => {
+            const coords = distritos[distrito];
+            console.log(coords.lat)
+            console.log(coords.lon)
+            if (!coords || typeof coords.lat !== "number" || typeof coords.lon !== "number") {
+                console.warn("Sin coordenadas para:", distrito);
+                return;
+            }
+
+            console.log("Procesando distrito:", distrito, coords);
+
+            const marker = L.marker([coords.lat, coords.lon]).addTo(map);
+
+            let idx = 0;
+
+            function crearPopup(evento) {
+                console.log("Evento usado en popup:", evento);
+
+                let climaInfo;
+                if (
+                    evento["Temperatura"] === null ||
+                    evento["Temperatura"] === undefined ||
+                    isNaN(evento["Temperatura"]) ||
+                    !evento["Descripción del tiempo"]
+                ) {
+                    climaInfo = "Clima no disponible - Evento demasiado lejano";
+                } else {
+                    climaInfo = `${evento["Temperatura"]}°C - ${evento["Descripción del tiempo"]}`;
+                }
+
+                return `
+    <div style="text-align: center; font-family: 'Open Sans', sans-serif;">
+      <strong style="color: #003366;">${evento["TITULO"]}</strong><br>
+      ${evento["PRECIO"] && !isNaN(evento["PRECIO"]) && evento["PRECIO"] > 0
+                        ? evento["PRECIO"] + " €"
+                        : "Gratuito"}
+ | Fecha: ${new Date(evento["FECHA"]).toLocaleDateString("es-ES", { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })} | Hora: ${evento["HORA"]}:00<br>
+      ${climaInfo}
+    </div>`;
+            }
+
+
+            marker.bindPopup(crearPopup(eventosDistrito[0]));
+
+            setInterval(() => {
+                idx = (idx + 1) % eventosDistrito.length;
+                marker.getPopup().setContent(crearPopup(eventosDistrito[idx]));
+            }, 3000);
+        });
+
+    </script>
+
+</body>
+
+</html>

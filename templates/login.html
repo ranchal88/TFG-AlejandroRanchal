@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Iniciar Sesión | Sistema de Recomendación de Eventos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+
+<body>
+
+    <div class="vista-dividida">
+      
+        <div class="columna-izquierda">
+            <div class="background-carousel">
+                <div class="bg-image bg1 active"
+                    style="background-image: url('{{ url_for('static', filename='images/bg1.jpg') }}');"></div>
+                <div class="bg-image bg2"
+                    style="background-image: url('{{ url_for('static', filename='images/bg2.jpg') }}');"></div>
+                <div class="bg-image bg3"
+                    style="background-image: url('{{ url_for('static', filename='images/bg3.jpg') }}');"></div>
+            </div>
+
+            <div class="login-container">
+                <img src="{{ url_for('static', filename='images/bg4.png') }}" class="logo-login" alt="Logo">
+                <h2>{% block titulo %}Iniciar Sesión{% endblock %}</h2>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for(request.endpoint) }}">
+                    {% block formulario %}
+                    <input type="text" name="username" placeholder="Usuario" required>
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                    <button type="submit">Entrar</button>
+                    <p style="margin-top: 15px; font-size: 0.9rem;">
+                        ¿No tienes cuenta? <a href="{{ url_for('registro') }}" style="color: #2a0394;">Regístrate aquí</a>
+                    </p>
+                    {% endblock %}
+
+                </form>
+            </div>
+        </div>
+
+
+        <div class="columna-derecha">
+            <div class="texto-bienvenida">
+                <h1>Bienvenido al Sistema de Recomendación de Eventos</h1>
+                <p>Tenemos en nuestras manos la oportunidad de construir una comunidad donde los buenos eventos
+                    florezcan. Tú formas parte del cambio: comparte, asiste, crea.</p>
+                <p>Explora, conecta y transforma la cultura de Madrid desde esta plataforma.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bgImages = document.querySelectorAll('.bg-image');
+        let current = 0;
+        setInterval(() => {
+            bgImages.forEach((img, i) => {
+                img.classList.toggle('active', i === current);
+            });
+            current = (current + 1) % bgImages.length;
+        }, 5000);
+    </script>
+</body>
+
+</html>
